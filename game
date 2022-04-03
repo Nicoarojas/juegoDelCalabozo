@@ -1,0 +1,133 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class juegoCalabozo {
+    public static void main(String[] args) {
+    
+    //creación de variables de sistema
+        Scanner in = new Scanner(System.in);
+        Random azar = new Random();
+
+        //variables del juego
+        String enemigos [] = {"Esqueleto", "Zombie", "Guerrero", "Asesino"};
+        String enemigo;
+        int vidaEnemigo;
+        int maxVidaEnemigo = 75;
+        int danoAtaqueEnemigo = 25;
+        String respuesta = "";
+
+        //variables del jugador
+        int vida = 100;
+        int danoAtaque = 50;
+        int pocionesCuracion = 3;
+        int curacion = 30;
+        int posibilidadDePocion = 50;
+
+        //variable de control para el bucle principal del juego
+        boolean jugar = true;
+
+        System.out.println("----------------------------------------------");
+        System.out.println(" # BIENVENIDO AL CALABOZO #");
+
+        JUEGO: //label (etiqueta)
+        while ( jugar ) { //bucle principal del juego
+            System.out.println("----------------------------------------------");
+
+            //establecemos la vida del enemigo de forma aleatoria
+            vidaEnemigo = azar.nextInt(maxVidaEnemigo);
+            //establecemos el enemigo a enfrentar de forma aletoria
+            enemigo = enemigos[azar.nextInt(enemigos.length)];
+            System.out.println("\t# Ha aparecido un " + enemigo + " #");
+
+            while ( vidaEnemigo > 0 && vida > 0) { //bucle anidado      <--- PREGUNTA: por que no con un OR "||"?
+                System.out.println("\t > Tu vida: " + vida);
+                System.out.println("\t > Vida del " + enemigo + ": " + vidaEnemigo);
+                System.out.println("\n \t ¿Qué deseas hacer?");
+                System.out.println("\t 1. Atacar");
+                System.out.println("\t 2. Tomar poción de curación");
+                System.out.println("\t 3. ¡Escapar!");
+
+                //capturo respuesta del jugador
+                String accion = in.next();
+
+                switch ( accion ) {
+                    case "1": //atacar
+                        //se establece el daño infligido con un numero aleatorio basado en mi daño de ataque máximo
+                        int danoInfligido = azar.nextInt(danoAtaque);
+                        //se establece la vida del enemigoel daño recibido con un numero aleatorio basado en el daño de ataque máximo del enemigo
+                        int danoRecibido = azar.nextInt(danoAtaqueEnemigo);
+
+                        //disminuimos los valores de las variables
+                        vidaEnemigo -= danoInfligido;
+                        vida -= danoRecibido;
+
+                        System.out.println("\t > Infligiste " + danoInfligido + " de daño al " + enemigo);
+                        System.out.println("\t > Recibiste " + danoRecibido + " de daño como represalia");
+
+                        break;
+
+                    case "2": //tomar poción de curación
+                        if ( pocionesCuracion > 0 ) { //compruebo si tiene pociones
+                            vida += curacion; //aumento su vida
+                            pocionesCuracion--; //disminuyo el num de pociones
+                            System.out.println("\t Tomaste una poción, tenés " + curacion + " más de vida. ");
+                            System.out.println("\t Te queda(n) " + pocionesCuracion + " pocion(es) de curación.");
+                        } else { //si el jugador ya no tiene pociones
+                            System.out.println("\t > No te quedan pociones de curación. Derrotar a un enemigo te da una chance de obtener una.");
+                        }
+                        break;
+                    case "3": //escapar
+                        System.out.println("\t ¡Has escapado del " + enemigo + "!");
+                        continue JUEGO; //vuelve al bucle principal
+                    default:
+                        System.out.println("¡Opción no válida!");
+                }//fin del switch
+            }//fin del while anidado
+
+            if ( vida < 1 ) { //comprobamos si el jugador murió
+                System.out.println("Has salido del calabozo muy débil por la batalla");
+                break; //sale del bucle principal
+            }                                                                                 //<--- quedaria mejor anidado con un else??
+
+            System.out.println("----------------------------------------------");
+            System.out.println("# ¡Has vencido al " + enemigo + "! #");
+            System.out.println("# Te quedan " + vida + " de vida.");
+
+            //generamos aleatoriamente chance de obtener poción
+            if ( azar.nextInt(100) < posibilidadDePocion ) {
+                pocionesCuracion++;
+                System.out.println("# ¡El " + enemigo + " derrotado arrojó una poción de curación! #");
+                System.out.println("# Ahora tienes " + pocionesCuracion + " pociones. #");
+            }
+
+            do {
+                //opciones luego de derrotar a un enemigo
+                System.out.println("----------------------------------------------");
+                System.out.println("¿Qué deseas hacer ahora?");
+                System.out.println("1. Continuar peleando");
+                System.out.println("2. Salir del calabozo");
+                //capturamos la respuesta del jugador
+                respuesta = in.next();
+            } while ( !respuesta.equals("1") && !respuesta.equals("2"));
+
+            switch ( respuesta ) {
+                case "1":
+                    System.out.println("¡Continúas en la aventura!");
+                    break; //sale del switch y ejecuta nuevamente el bucle principal
+                case "2":
+                    System.out.println("Sales del calabozo. ¡Adiós!");
+                    jugar = false;
+                    break; //sale del switch
+                default:
+                    System.out.println("¡Opcion no valida!");  //le agregué el default.
+            }
+
+
+        }//fin del while principal
+
+        in.close();
+        System.out.println("#########################");
+        System.out.println("#   GRACIAS POR JUGAR   #");
+        System.out.println("#########################");
+}
+}
